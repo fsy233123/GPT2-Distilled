@@ -408,18 +408,14 @@ PPL = exp(loss)
 
 当前本地 `results.csv` 中已有的样例结果如下：
 
+Current comparison table:
 | Model | Params | Sparsity | PPL |
 | --- | --- | --- | --- |
-| GPT2 baseline | 124439808 | 0.0% | 21.4467 |
-| Student scratch | 81912576 | 0.0% | 22214.4909 |
-| Student distilled | 81912576 | 0.0% | 24.9270 |
-| Distilled + Pruned | 81912576 | 40.0% | 20293.4342 |
+| GPT2 baseline | 124439808 | 0.0% | 21.4375 |
+| Student scratch | 81912576 | 0.0% | 28.3608 |
+| Student distilled | 81912576 | 0.0% | 24.9497 |
+| Distilled + Pruned | 81912576 | 40.0% | 22.7057 |
 
-但要注意，这张表目前并不完全是同一轮正式实验的最终结果：
-
-- `baseline` 和 `distilled` 已经是比较可信的新结果
-- `scratch` 和 `pruned` 仍然可能是旧 smoke-test 结果
-- 因此需要按上面的完整命令重新正式跑一遍，才能得到真正可比的 4 行结果
 
 ---
 
@@ -463,35 +459,6 @@ L = alpha * CE + (1 - alpha) * KL
 如果蒸馏有效，通常会看到：
 
 - `Student distilled` 明显优于 `Student scratch`
-
-### 5.3 为什么当前 `scratch` 和 `pruned` 看起来很差
-
-从目前现象判断，更大的可能不是：
-
-- 压缩方法完全失效
-
-而是：
-
-- `Student scratch` 还没有用正式配置重新完整跑完
-- `Distilled + Pruned` 也还没有基于最新 distilled student 正式跑完
-
-因此当前合理的解读是：
-
-- baseline 正常
-- distilled 正常，并且已经证明蒸馏有效
-- scratch / pruned 还需要重新正式运行
-
-### 5.4 对项目落地的理解
-
-这个项目最有价值的点，不只是把一个结果表跑出来，而是把完整压缩路线真正工程化：
-
-- 数据转换
-- 预处理缓存
-- 单卡 / 多卡训练
-- baseline / scratch / distill / prune 的统一结果记录
-- 模型目录与评估流程统一管理
-
-这让整个实验不再是一次性脚本，而是一条可复现实验流水线。
 
 ---
 
@@ -559,12 +526,6 @@ cd /home/qyq/gpt2_compression
 - teacher-student 蒸馏
 - 剪枝与恢复微调
 - 使用统一的 PPL 指标做结果比较
-
-从当前结果看：
-
-- baseline 已经稳定
-- distilled 已经接近 baseline
-- scratch 和 pruned 还需要基于最新正式模型再跑一轮
 
 从工程角度看，这个项目已经具备博客分享、实验复现和后续扩展的基础。后续如果继续扩展，可以考虑：
 
